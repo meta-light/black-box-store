@@ -4,7 +4,7 @@ import { DepinApp } from '@/app/types';
 
 interface AppCardProps {app: DepinApp; onUpdate: () => void;}
 
-export function AppCard({ app, onUpdate }: AppCardProps) {
+function AppCard({ app, onUpdate }: AppCardProps) {
   const [loading, setLoading] = useState(false);
   const [showLogs, setShowLogs] = useState(false);
   const [logs, setLogs] = useState('');
