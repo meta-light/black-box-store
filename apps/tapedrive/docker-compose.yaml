@@ -1,0 +1,101 @@
+version: '3.8'
+
+services:
+  tapedrive:
+    image: ubuntu:24.04
+    container_name: tapedrive-node
+    restart: unless-stopped
+    environment:
+      - RUST_LOG=info
+      - NETWORK=devnet
+    volumes:
+      # Mount deploy directory for miner.json
+      - ./deploy:/app/deploy
+      # Mount data directory for persistence
+      - tapedrive-data:/app/data
+    networks:
+      - tapedrive-network
+    
+    # Install tapedrive and run the node
+    command: >
+      bash -c "
+        echo '========================================';
+        echo 'Tapedrive Node Starting...';
+        echo '========================================';
+        
+        # Update and install dependencies
+        apt-get update && apt-get install -y curl wget git ca-certificates;
+        
+        # Install Rust (required for tapedrive)
+        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y;
+        . ~/.cargo/env;
+        
+        # Clone the tapedrive deploy repo
+        cd /tmp;
+        git clone https://github.com/spool-labs/deploy.git tape-deploy || true;
+        cd tape-deploy;
+        
+        # Download or build tapedrive binary
+        echo 'Installing tapedrive CLI...';
+        cargo install tapedrive-cli || {
+          echo 'Binary installation failed, trying alternative method...';
+          curl -sSL https://github.com/tapedrive-io/tape/releases/latest/download/tapedrive-linux-x86_64 -o /usr/local/bin/tapedrive;
+          chmod +x /usr/local/bin/tapedrive;
+        };
+        
+        # Verify installation
+        if ! command -v tapedrive &> /dev/null; then
+          echo 'ERROR: tapedrive installation failed!';
+          exit 1;
+        fi;
+        
+        echo 'tapedrive CLI installed successfully';
+        tapedrive --version || echo 'Version check failed';
+        
+        # Check for miner.json
+        if [ ! -f /app/deploy/miner.json ]; then
+          echo 'ERROR: miner.json not found at /app/deploy/miner.json';
+          echo 'Please create a Solana keypair and mount it at ./deploy/miner.json';
+          echo '';
+          echo 'To generate: solana-keygen new --outfile deploy/miner.json';
+          exit 1;
+        fi;
+        
+        echo 'Found miner.json, starting services...';
+        
+        # Start archive in background
+        echo 'Starting tapedrive archive...';
+        tapedrive archive --data-dir /app/data &
+        ARCHIVE_PID=$$!;
+        
+        # Give archive time to initialize
+        sleep 5;
+        
+        # Get miner address from keypair
+        echo 'Starting tapedrive miner...';
+        
+        # Start mining (this runs in foreground)
+        # The miner.json file contains the keypair
+        tapedrive mine --keypair /app/deploy/miner.json --network devnet;
+        
+        # If mining stops, kill archive
+        kill $$ARCHIVE_PID 2>/dev/null || true;
+      "
+    
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+          cpus: '2.0'
+        reservations:
+          memory: 2G
+          cpus: '1.0'
+
+networks:
+  tapedrive-network:
+    driver: bridge
+
+volumes:
+  tapedrive-data:
+    driver: local

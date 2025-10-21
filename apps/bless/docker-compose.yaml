@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  blessnetwork-node:
+    image: ghcr.io/blessnetwork/b7s:0.6.6.patch3
+    container_name: blessnetwork-node
+    ports:
+      - "9527:9527"
+    env_file:
+      - .env
+    restart: unless-stopped

@@ -1,0 +1,115 @@
+version: '3.8'
+
+services:
+  pipe-pop:
+    image: ubuntu:24.04
+    container_name: pipe-pop-node
+    working_dir: /opt/pipe
+    restart: unless-stopped
+    
+    volumes:
+      # Mount local directory for persistence and configuration
+      - ./data:/opt/pipe/data
+      - ./cache:/opt/pipe/cache
+      - ./.env:/opt/pipe/.env:ro
+    
+    ports:
+      - "8080:80"       # HTTP
+      - "8443:443"      # HTTPS
+      - "8081:8081"     # Health check / API
+      - "9090:9090"     # Prometheus metrics
+      - "4433:4433"     # QUIC
+      - "9999:9999/udp" # UDP probe
+    
+    environment:
+      - TZ=UTC
+    
+    command: >
+      bash -c "
+        set -e;
+        echo '=========================================';
+        echo 'Pipe Network POP Node Starting...';
+        echo '=========================================';
+        
+        # Install system dependencies
+        echo 'Installing system dependencies...';
+        apt-get update -qq;
+        apt-get install -y ca-certificates tzdata curl wget;
+        update-ca-certificates || true;
+        
+        # Download the latest Pipe POP binary
+        echo 'Downloading Pipe POP binary...';
+        if [ ! -f /opt/pipe/pop ]; then
+          curl -fsSL https://pipe.network/p1-cdn/releases/latest/download/pop -o /opt/pipe/pop;
+          chmod +x /opt/pipe/pop;
+          echo '✓ Binary downloaded successfully';
+        else
+          echo '✓ Binary already exists';
+        fi;
+        
+        # Check for .env file
+        if [ ! -f /opt/pipe/.env ]; then
+          echo '⚠️  WARNING: .env file not found!';
+          echo '';
+          echo 'Please create a .env file with the following:';
+          echo '';
+          echo 'NODE_SOLANA_PUBLIC_KEY=your_solana_wallet_address';
+          echo 'NODE_NAME=my-pop-node';
+          echo 'NODE_EMAIL=operator@example.com';
+          echo 'NODE_LOCATION=Your Location';
+          echo 'MEMORY_CACHE_SIZE_MB=512';
+          echo 'DISK_CACHE_SIZE_GB=100';
+          echo 'DISK_CACHE_PATH=./cache';
+          echo 'HTTP_PORT=80';
+          echo 'HTTPS_PORT=443';
+          echo 'UPNP_ENABLED=false';
+          echo '';
+          echo 'Waiting for .env file...';
+          sleep infinity;
+        fi;
+        
+        # Load environment variables
+        echo 'Loading configuration...';
+        set -a && . /opt/pipe/.env && set +a;
+        
+        # Create cache directory if it doesn't exist
+        mkdir -p /opt/pipe/cache;
+        
+        # Display configuration
+        echo '=========================================';
+        echo 'Configuration:';
+        echo '  Node Name: '\"$$NODE_NAME\";
+        echo '  Location: '\"$$NODE_LOCATION\";
+        echo '  Wallet: '\"$$NODE_SOLANA_PUBLIC_KEY\";
+        echo '=========================================';
+        
+        # Start the POP node
+        echo 'Starting Pipe POP node...';
+        echo '';
+        
+        exec /opt/pipe/pop;
+      "
+    
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 4G
+        reservations:
+          cpus: '2'
+          memory: 2G
+    
+    # Health check
+    healthcheck:
+      test: ["CMD", "curl", "-fsSL", "http://localhost:8081/health"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+volumes:
+  pipe-data:
+    driver: local
+  pipe-cache:
+    driver: local

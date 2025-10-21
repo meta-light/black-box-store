@@ -1,0 +1,13 @@
+version: "3.9"
+services:
+  grass-desktop:
+    container_name: grass-desktop
+    hostname: black-box
+    image: mrcolorrain/grass-desktop
+    environment:
+      USER_EMAIL: your_email
+      USER_PASSWORD: your_password
+      TRY_AUTOLOGIN: "false"
+    ports:
+      - "5900:5900"
+      - "6080:6080"

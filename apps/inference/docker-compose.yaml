@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  inference-node:
+    image: inferencedevnet/amd64-nvidia-inference-node:latest
+    container_name: inference-node
+    command: --code <your-worker-code>
+    restart: always
+    runtime: nvidia
+    environment:
+      - CONFIG_DIR=/root/.inference
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ["all"]
+              capabilities: [gpu]
+    volumes:
+      - ~/.inference:/root/.inference

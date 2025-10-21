@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  nexus-cli:
+    image: ubuntu:22.04
+    container_name: nexus-cli
+    restart: unless-stopped
+    volumes:
+      - ~/.nexus:/root/.nexus
+      - ./nexus-cli:/opt/nexus-cli
+    working_dir: /opt/nexus-cli
+    command: >
+      bash -c "
+      apt-get update &&
+      apt-get install -y curl build-essential pkg-config libssl-dev git-all protobuf-compiler &&
+      curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y &&
+      . /root/.cargo/env &&
+      curl https://cli.nexus.xyz/ | sh &&
+      . /root/.bashrc &&
+      if [ -f /root/.nexus/credentials.json ]; then
+        nexus-network start
+      else
+        echo 'Please run: docker exec -it nexus-cli bash' &&
+        echo 'Then register with: nexus-network register-user --wallet-address <your-wallet>' &&
+        echo 'And: nexus-network register-node' &&
+        echo 'Finally: nexus-network start' &&
+        tail -f /dev/null
+      fi
+      "
+    stdin_open: true
+    tty: true

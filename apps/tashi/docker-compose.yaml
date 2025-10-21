@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  tashi-depin-worker:
+    image: ghcr.io/tashigg/tashi-depin-worker:0
+    container_name: tashi-depin-worker
+    restart: on-failure
+    ports:
+      - "39065:39065"
+      - "127.0.0.1:9000:9000"
+    environment:
+      - RUST_LOG=info,tashi_depin_worker=debug,tashi_depin_common=debug
+      - PUBLIC_IP=${PUBLIC_IP}
+    volumes:
+      - tashi-depin-worker-auth:/home/worker/auth
+      - /tmp/tashi-depin-worker:/tmp/tashi-depin-worker
+    command: >
+      run /home/worker/auth
+      --unstable-update-download-path /tmp/tashi-depin-worker
+      ${PUBLIC_IP:+--agent-public-addr=${PUBLIC_IP}:39065}
+    stdin_open: true
+    tty: true
+
+volumes:
+  tashi-depin-worker-auth:
+    name: tashi-depin-worker-auth
