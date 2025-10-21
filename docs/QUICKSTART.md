@@ -1,199 +1,138 @@
-# Quick Start Guide
+# Quick Start Guide - Dawn Black Box Store
 
-Get the DePIN App Store running in 5 minutes!
+Get up and running in 5 minutes! 🚀
 
-## Prerequisites
+## Prerequisites Check
 
-- Ubuntu 20.04+ machine
-- sudo/root access
-- Internet connection
+Before installing, verify you have these installed:
+
+```bash
+# Check Node.js (need v18+)
+node --version
+
+# Check Docker
+docker --version
+
+# Check Git
+git --version
+```
+
+Don't have them? Install:
+- **Node.js**: https://nodejs.org/
+- **Docker**: https://www.docker.com/products/docker-desktop
+- **Git**: https://git-scm.com/
 
 ## Installation
 
-### 1. Download the Project
+### One-Line Install
 
 ```bash
-# If using git
-git clone <repository-url>
-cd depin-app-store
-
-# Or if you have the archive
-tar -xzf depin-app-store.tar.gz
-cd depin-app-store
+curl -fsSL https://raw.githubusercontent.com/meta-light/black-box-store/main/install.sh | bash
 ```
 
-### 2. Run the Installer
+### Or Manual Install
 
 ```bash
-sudo bash install.sh
+git clone https://github.com/meta-light/black-box-store.git
+cd black-box-store
+bash install.sh
 ```
 
-This will:
-- ✅ Install Node.js 20.x
-- ✅ Install Docker & Docker Compose
-- ✅ Install the DePIN App Store
-- ✅ Create a systemd service
-- ✅ Start the application
+### Post-Install
 
-Installation takes about 5-10 minutes.
-
-### 3. Access the App Store
-
-Open your browser and navigate to:
-```
-http://localhost:3000
-```
-
-## First Steps
-
-### Upload Your First App
-
-1. Click **"Upload App"**
-2. Fill in the form:
-   - Name: `Test Node`
-   - Company: `My Company`
-   - Description: `A test DePIN node`
-   - Version: `1.0.0`
-   - Category: `Storage`
-3. Upload a `docker-compose.yml` file (use `examples/sample-app-compose.yml` for testing)
-4. Click **"Upload App"**
-
-### Install an App
-
-1. Find your app in the list
-2. Click **"Install"**
-3. Wait for installation to complete
-4. Status will change to "Running" with a green indicator
-
-### Manage Apps
-
-- **Stop**: Click "Stop" to pause a running app
-- **Start**: Click "Start" to resume a stopped app
-- **View Logs**: Click "View Logs" to see container output
-- **Uninstall**: Click "Uninstall" to remove the app and its containers
-
-## Testing with the Sample App
+Reload your shell configuration:
 
 ```bash
-# Use the provided sample
-cd examples
-cp sample-app-compose.yml ../my-test-app.yml
-cd ..
+# macOS (zsh)
+source ~/.zshrc
 
-# Upload via the web interface
-# Then install it
+# Linux or macOS (bash)
+source ~/.bashrc
 ```
 
-After installation, the sample app will be accessible at `http://localhost:8080`
+## Usage
+
+### Start the Black Box Store
+
+```bash
+dbb-store
+```
+
+That's it! The web interface will open automatically at `http://localhost:3456`
+
+### Managing Apps
+
+In the web interface:
+
+1. **Browse** available DePIN apps
+2. **Install** any app with one click
+3. **Start/Stop** apps as needed
+4. **View Logs** to monitor apps
+5. **Uninstall** when done
+
+### Stop the Server
+
+Press `Ctrl+C` in the terminal where `dbb-store-store` is running.
 
 ## Common Commands
 
 ```bash
-# Check service status
-sudo systemctl status depin-app-store
+# Start the Black Box Store
+dbb-store-store
 
-# View logs
-sudo journalctl -u depin-app-store -f
-
-# Restart service
-sudo systemctl restart depin-app-store
-
-# Stop service
-sudo systemctl stop depin-app-store
-
-# Start service
-sudo systemctl start depin-app-store
-```
-
-## Development Mode
-
-To run in development mode (for testing/development):
-
-```bash
-# Install dependencies
+# Update to latest version
+cd ~/.black-box-store
+git pull
 npm install
+npm run build
 
-# Run in dev mode
-npm run dev
+# Check Docker status
+docker info
+
+# View running containers
+docker ps
 ```
-
-Access at `http://localhost:3000`
 
 ## Troubleshooting
 
-### Service won't start
+### Command not found: dbb-store
 
 ```bash
-# Check logs for errors
-sudo journalctl -u depin-app-store -n 50
-
-# Try starting manually
-cd /opt/depin-app-store
-npm start
+# Add to PATH manually
+echo 'export PATH="$HOME/.black-box-store/bin:$PATH"' >> ~/.zshrc
+source ~/.zshrc
 ```
 
-### Docker not found
+### Docker not running
 
+**macOS**: Open Docker Desktop from Applications
+
+**Linux**:
 ```bash
-# Install Docker manually
-curl -fsSL https://get.docker.com -o get-docker.sh
-sudo sh get-docker.sh
-
-# Add user to docker group
-sudo usermod -aG docker $USER
-
-# Log out and back in
+sudo systemctl start docker
 ```
 
-### Port 3000 already in use
+### Port 3456 already in use
 
-```bash
-# Find what's using the port
-sudo lsof -i :3000
+Edit `~/.black-box-store/bin/dbb-store` and change the `PORT` variable to a different port.
 
-# Change the port
-sudo systemctl edit depin-app-store
-```
+## What Gets Installed?
 
-Add:
-```ini
-[Service]
-Environment=PORT=8080
-```
-
-Then restart:
-```bash
-sudo systemctl daemon-reload
-sudo systemctl restart depin-app-store
-```
+- Repository cloned to `~/.black-box-store`
+- CLI command `dbb-store` added to your PATH
+- All dependencies installed automatically
 
 ## Next Steps
 
-- Read the full [README.md](README.md) for detailed documentation
-- Check [DEPLOYMENT.md](DEPLOYMENT.md) for production deployment
-- Explore [examples/](examples/) for sample Docker Compose files
+- 📚 [Read full documentation](https://github.com/meta-light/black-box-store/blob/main/README.md)
+- 🛠️ [Learn how to add apps](https://github.com/meta-light/black-box-store/blob/main/docs/ADDING_APPS.md)
+- 🛒 [Get Dawn Black Box hardware](https://shop.dawninternet.com/)
 
-## Support
+## Need Help?
 
-Having issues? Check:
-1. Service logs: `sudo journalctl -u depin-app-store -f`
-2. Docker status: `sudo systemctl status docker`
-3. Port availability: `sudo lsof -i :3000`
-4. Disk space: `df -h`
-
-## Uninstall
-
-To remove the DePIN App Store:
-
-```bash
-sudo systemctl stop depin-app-store
-sudo systemctl disable depin-app-store
-sudo rm /etc/systemd/system/depin-app-store.service
-sudo rm -rf /opt/depin-app-store
-sudo systemctl daemon-reload
-```
+- [Open an issue](https://github.com/meta-light/black-box-store/issues)
+- [View documentation](https://github.com/meta-light/black-box-store/tree/main/docs)
 
 ---
 
-**That's it! You're ready to manage your DePIN nodes.** 🚀
-
+Happy node running! 🎉

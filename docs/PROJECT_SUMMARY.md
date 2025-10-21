@@ -1,41 +1,47 @@
-# DePIN App Store - Project Summary
+# Dawn Black Box Store - Project Summary
 
 ## Overview
 
-The DePIN App Store is a self-hosted application management platform designed for Ubuntu machines. It enables companies to upload Docker Compose files for their DePIN (Decentralized Physical Infrastructure Network) nodes and allows users to easily install, manage, and monitor these applications through a modern web interface.
+The Dawn Black Box Store is a CLI-based application management platform for managing DePIN (Decentralized Physical Infrastructure Network) nodes. It provides a simple command-line interface that launches a local web application, enabling users to easily install, manage, and monitor DePIN applications through a modern interface powered by Docker.
 
 ## Key Features
 
-### 1. **App Upload & Management**
-- Companies can upload Docker Compose files with metadata
-- Apps are stored with version information and descriptions
-- YAML validation ensures compose files are valid
-- Categories for organizing different types of DePIN nodes
+### 1. **Simple CLI Interface**
+- Single command (`dbb-store`) to launch the application
+- Automatic browser opening
+- No background services or daemons needed
+- Works on macOS and Linux
 
-### 2. **One-Click Installation**
+### 2. **Pre-configured DePIN Apps**
+- Curated collection of DePIN projects
+- Ready-to-install configurations
+- Docker Compose based deployments
+- Version controlled app definitions
+
+### 3. **One-Click Installation**
 - Install apps with a single click
 - Automatic Docker Compose orchestration
 - Status tracking (Available, Running, Stopped)
 - Clean uninstallation with container cleanup
 
-### 3. **Lifecycle Management**
+### 4. **Lifecycle Management**
 - Start/stop apps independently
 - View real-time container logs
-- Monitor app status
+- Monitor app status with visual indicators
 - Manage multiple apps simultaneously
 
-### 4. **Modern Web Interface**
+### 5. **Modern Web Interface**
 - Built with Next.js 15 and React 19
 - Responsive design with Tailwind CSS
 - Real-time status updates
 - Intuitive user experience
 - Dark theme optimized for extended use
 
-### 5. **Ubuntu Integration**
-- One-command installation script
-- Systemd service for automatic startup
-- Docker integration with permission handling
-- Easy deployment and management
+### 6. **Cross-Platform Installation**
+- Automated installation script
+- Works on macOS and Linux
+- Dependency checking and verification
+- Simple PATH integration
 
 ## Technical Architecture
 
@@ -44,301 +50,381 @@ The DePIN App Store is a self-hosted application management platform designed fo
 - **UI**: React 19 + TypeScript
 - **Styling**: Tailwind CSS 4
 - **State Management**: React hooks (useState, useEffect)
+- **Icons**: SVG inline icons
 
 ### Backend
 - **API**: Next.js API Routes
-- **Docker Integration**: Native Docker Compose CLI
+- **Docker Integration**: Native Docker Compose CLI via child_process
 - **Storage**: JSON-based file storage (easily upgradable to database)
-- **Runtime**: Node.js 20+
+- **Runtime**: Node.js 18+
 
 ### Infrastructure
 - **Container Runtime**: Docker Engine + Docker Compose v2
-- **Service Management**: systemd
-- **OS**: Ubuntu 20.04+
+- **CLI**: Bash script wrapper
+- **Installation**: Git-based deployment to `~/.black-box-store`
+- **Port**: 3456 (configurable)
+
+### Deployment Model
+- **No systemd service**: Application runs only when needed
+- **CLI-driven**: User starts/stops manually with `dbb-store` command
+- **Local-only**: Runs on localhost for security
+- **Docker-managed**: All apps run as Docker containers
 
 ## Project Structure
 
 ```
-depin-app-store/
+black-box-store/
 ├── app/                       # Next.js application
 │   ├── api/
 │   │   ├── apps/             # App management API
 │   │   │   ├── route.ts      # List apps
-│   │   │   ├── upload/       # Upload new apps
 │   │   │   └── [id]/         # App-specific operations
-│   │   │       ├── route.ts  # Get/delete app
+│   │   │       ├── route.ts  # Get app details
 │   │   │       ├── install/  # Install app
 │   │   │       ├── uninstall/ # Uninstall app
 │   │   │       ├── start/    # Start app
 │   │   │       ├── stop/     # Stop app
 │   │   │       └── logs/     # View logs
-│   │   └── health/           # Health check endpoint
+│   │   └── docker/
+│   │       └── health/       # Docker health check
 │   ├── layout.tsx            # Root layout
-│   └── page.tsx              # Main page
-├── components/
-│   ├── AppCard.tsx           # App display component
-│   └── UploadModal.tsx       # Upload form component
+│   ├── page.tsx              # Main page with UI
+│   └── types.ts              # TypeScript definitions
+├── apps/                      # DePIN app definitions (in repo)
+│   ├── interface.ts          # App info interface
+│   ├── pipe-network/         # Example app
+│   ├── nexus/               # Example app
+│   ├── arcium/              # Example app
+│   ├── bless/               # Example app
+│   ├── grass/               # Example app
+│   ├── inference/           # Example app
+│   ├── tapedrive/           # Example app
+│   └── tashi/               # Example app
 ├── lib/
 │   ├── docker.ts             # Docker Compose integration
 │   └── storage.ts            # Data persistence layer
-├── types/
-│   └── index.ts              # TypeScript definitions
-├── examples/
-│   ├── sample-app-compose.yml # Sample Docker Compose
-│   └── README.md             # Examples documentation
-├── data/                      # Runtime data (auto-created)
-│   ├── apps.json             # App registry
+├── data/                      # Runtime data (auto-created, gitignored)
+│   ├── apps.json             # App registry with status
 │   ├── installations.json    # Installation records
-│   └── compose-files/        # Uploaded compose files
-├── install.sh                # Ubuntu installation script
+│   └── compose-files/        # Deployed compose files
+├── bin/
+│   └── dbb-store                   # CLI executable script
+├── docs/                      # Documentation
+│   ├── QUICKSTART.md         # Quick start guide
+│   ├── ADDING_APPS.md        # How to add apps
+│   ├── DEPLOYMENT.md         # Deployment guide
+│   ├── CONTRIBUTING.md       # Contribution guidelines
+│   ├── OVERVIEW.md           # Technical overview
+│   └── PROJECT_SUMMARY.md    # This file
+├── public/
+│   └── icons/                # App icons
+├── install.sh                # Installation script
 ├── README.md                 # Main documentation
-├── QUICKSTART.md             # Quick start guide
-├── DEPLOYMENT.md             # Deployment guide
-├── CONTRIBUTING.md           # Contribution guidelines
-├── LICENSE                   # MIT License
-└── PROJECT_SUMMARY.md        # This file
+├── QUICKSTART.md             # Quick start (root level)
+├── package.json              # Node.js dependencies
+└── LICENSE                   # MIT License
 ```
 
 ## API Endpoints
 
 ### Apps Management
-- `GET /api/apps` - List all apps
+- `GET /api/apps` - List all apps with current status
 - `GET /api/apps/[id]` - Get app details
-- `POST /api/apps/upload` - Upload new app
-- `DELETE /api/apps/[id]` - Delete app
 
 ### App Operations
-- `POST /api/apps/[id]/install` - Install app
-- `POST /api/apps/[id]/uninstall` - Uninstall app
-- `POST /api/apps/[id]/start` - Start app
-- `POST /api/apps/[id]/stop` - Stop app
-- `GET /api/apps/[id]/logs?tail=100` - View logs
+- `POST /api/apps/[id]/install` - Install app via Docker Compose
+- `POST /api/apps/[id]/uninstall` - Uninstall app and remove containers
+- `POST /api/apps/[id]/start` - Start stopped app
+- `POST /api/apps/[id]/stop` - Stop running app
+- `GET /api/apps/[id]/logs?tail=100` - View container logs
 
 ### System
-- `GET /api/health` - Health check
+- `GET /api/health` - Application health check
+- `GET /api/docker/health` - Docker daemon health check
 
 ## Data Models
 
 ### DepinApp
 ```typescript
 {
-  id: string;
-  name: string;
-  description: string;
-  company: string;
-  version: string;
-  dockerComposeFile: string;
-  status: 'available' | 'installed' | 'running' | 'stopped';
-  uploadedAt: string;
-  category?: string;
+  id: string;                    // Unique identifier
+  name: string;                  // Display name
+  description: string;           // App description
+  company: string;               // Company/organization
+  version: string;               // App version
+  category: string;              // Category (Network, Storage, etc.)
+  dockerComposeFile: string;     // Compose filename
+  icon: string;                  // Icon path/URL
+  docs?: string;                 // Documentation URL
+  status: 'available' | 'running' | 'stopped'; // Current status
+  networkStatus: 'mainnet' | 'testnet' | 'devnet'; // Network status
+  requirements: {
+    minMemoryGb: string;         // Minimum RAM
+    minCpu: string;              // Minimum CPU cores
+    minDiskGb: string;           // Minimum disk space
+  };
 }
 ```
 
 ### AppInstallation
 ```typescript
 {
-  appId: string;
-  installedAt: string;
-  status: 'running' | 'stopped' | 'error';
-  projectName: string;
+  appId: string;                 // App identifier
+  installedAt: string;           // ISO timestamp
+  status: 'running' | 'stopped' | 'error'; // Status
+  projectName: string;           // Docker Compose project name
 }
 ```
 
-## Installation Methods
+## Installation & Usage
 
-### Automated (Recommended)
+### Installation
 ```bash
-sudo bash install.sh
+# One-line install
+curl -fsSL https://raw.githubusercontent.com/meta-light/black-box-store/main/install.sh | bash
+
+# Or manual
+git clone https://github.com/meta-light/black-box-store.git
+cd black-box-store
+bash install.sh
 ```
 
-### Manual
+### Usage
 ```bash
-npm install
-npm run build
-npm start
+# Start the application
+dbb-store
+
+# Stop with Ctrl+C
 ```
 
 ### Development
 ```bash
-npm install
+cd ~/.black-box-store
 npm run dev
 ```
 
 ## System Requirements
 
 ### Minimum
-- Ubuntu 20.04+
-- 2 CPU cores
+- macOS 10.15+ or Linux (Ubuntu 20.04+)
+- Node.js 18+
+- Docker 20.10+
 - 2 GB RAM
 - 10 GB disk space
 - Internet connection
 
 ### Recommended
-- Ubuntu 22.04 LTS
-- 4 CPU cores
+- macOS 13+ or Ubuntu 22.04 LTS
+- Node.js 20+
+- Docker 24+
 - 4 GB RAM
 - 50 GB+ disk space
-- Stable internet
+- Stable broadband
 
-## Security Considerations
+## Security Model
 
 ### Current Implementation
-- Localhost-only by default (port 3000)
-- Docker socket access required
-- File-based storage
-- No authentication
+- **Localhost-only**: Runs on 127.0.0.1 by default
+- **No authentication**: Intended for single-user, trusted environments
+- **Docker socket access**: Full Docker API access required
+- **File-based storage**: JSON files in user's home directory
+- **CLI-based**: No background services
+
+### Security Features
+- No remote access by default
+- User-owned installation directory
+- Apps run in isolated Docker containers
+- Docker provides network isolation
+- No privileged containers by default
 
 ### Production Recommendations
-- Add authentication/authorization
-- Use reverse proxy (Nginx/Apache)
-- Enable SSL/TLS
+- Run behind VPN for remote access
+- Add reverse proxy with authentication (Nginx + Basic Auth)
+- Enable SSL/TLS for remote access
 - Implement rate limiting
-- Add input validation and sanitization
-- Use database instead of JSON files
-- Implement resource limits
 - Add audit logging
+- Use secrets management for app credentials
+- Implement resource limits
+- Regular security updates
 
 ## Use Cases
 
 ### Primary Use Cases
-1. **DePIN Node Hosting**: Easy deployment of storage, compute, or network nodes
-2. **Private App Store**: Internal app distribution for organizations
-3. **Development Testing**: Quick Docker Compose testing environment
-4. **Infrastructure Management**: Centralized management of multiple services
+1. **Personal DePIN Hosting**: Run DePIN nodes on local hardware
+2. **Development Testing**: Test DePIN app configurations
+3. **Node Management**: Centralized management of multiple nodes
+4. **Learning**: Explore different DePIN projects
 
-### Example DePIN Applications
-- Filecoin storage nodes
-- Helium network hotspots
-- Render network compute nodes
-- IPFS nodes
-- Blockchain validators
-- IoT gateways
-- AI/ML compute providers
+### Target Users
+- DePIN node operators
+- Crypto enthusiasts
+- Home server operators
+- Developers testing DePIN applications
+- Dawn Black Box hardware owners
+
+### Supported DePIN Projects
+- **Pipe Network**: Decentralized CDN
+- **Nexus**: Decentralized compute
+- **Arcium**: Confidential computing
+- **Grass**: Bandwidth sharing
+- **Inference Labs**: AI inference
+- **TapeDrive**: Decentralized storage
+- **Tashi**: High-performance network
+- **Bless**: Infrastructure network
 
 ## Future Enhancements
 
 ### Short-term
-- [ ] Database integration (PostgreSQL/MongoDB)
-- [ ] User authentication
-- [ ] Search and filtering
-- [ ] Resource monitoring
-- [ ] Auto-update functionality
+- [ ] App update notifications
+- [ ] Resource usage monitoring (CPU, RAM, disk)
+- [ ] App configuration UI
+- [ ] Backup/restore functionality
+- [ ] Multi-language support
 
 ### Medium-term
-- [ ] Multi-user support with roles
-- [ ] App marketplace/registry
-- [ ] Resource usage graphs
-- [ ] Scheduled maintenance
-- [ ] Backup/restore functionality
-- [ ] Custom app registries
+- [ ] Database integration (SQLite/PostgreSQL)
+- [ ] Custom app repositories
+- [ ] App dependencies management
+- [ ] Scheduled start/stop
+- [ ] Performance metrics dashboard
+- [ ] Community app ratings
 
 ### Long-term
 - [ ] Multi-machine orchestration
-- [ ] Kubernetes integration
-- [ ] App dependencies management
-- [ ] Revenue sharing for app providers
-- [ ] Community ratings and reviews
-- [ ] Mobile app
+- [ ] Dawn Black Box hardware integration
+- [ ] Rewards tracking dashboard
+- [ ] Mobile companion app
+- [ ] Auto-update functionality
+- [ ] Cloud backup integration
 
 ## Performance Characteristics
 
-### Resource Usage (App Store itself)
-- Memory: ~100-200 MB
-- CPU: Minimal (< 5% on 2-core system)
-- Disk: ~300 MB + data
+### Resource Usage (Black Box Store itself)
+- **Memory**: ~100-150 MB
+- **CPU**: Minimal (< 2% on modern systems)
+- **Disk**: ~200 MB + dependencies
+- **Network**: Only during app installation
+
+### App Resource Usage
+- Varies by DePIN app
+- Typically 500 MB - 4 GB RAM per app
+- Docker provides resource isolation
 
 ### Scalability
-- Can handle 50+ apps in registry
+- Can manage 50+ apps in catalog
 - Supports 20+ concurrent installations
-- Lightweight enough for edge devices
+- Lightweight enough for Raspberry Pi 4+
 
 ## Development Workflow
 
-### Adding a New Feature
-1. Create feature branch
-2. Implement backend API route
-3. Update types if needed
-4. Create/update frontend component
-5. Test manually
-6. Update documentation
-7. Submit PR
+### Adding a New DePIN App
+1. Create folder in `apps/[app-name]/`
+2. Add `info.ts` with metadata
+3. Add `docker-compose.yaml`
+4. Add app icon to `public/icons/`
+5. Test installation locally
+6. Submit pull request
+
+### Contributing Code
+1. Fork repository
+2. Create feature branch
+3. Implement changes
+4. Test thoroughly
+5. Update documentation
+6. Submit pull request
 
 ### Testing
-- Manual testing in dev mode
-- Production build testing
+- Manual testing with `npm run dev`
+- Production build testing with `npm run build && npm start`
 - Docker integration testing
 - Error scenario testing
-
-## Deployment Options
-
-### Single Machine
-- Run on one Ubuntu server
-- Access via localhost or LAN
-
-### Multi-Machine
-- Deploy to multiple servers
-- Each runs independent instance
-- Could sync via shared registry (future)
-
-### Cloud Deployment
-- AWS EC2, DigitalOcean, etc.
-- Behind load balancer
-- With managed Docker
+- Cross-platform testing (macOS + Linux)
 
 ## Monitoring & Logging
 
 ### Current Implementation
-- systemd journal logs
+- Console logs in terminal where `dbb-store` runs
 - Docker Compose logs via API
-- Health check endpoint
+- Real-time log viewing in UI
+- Health check endpoints
 
-### Future Improvements
-- Prometheus metrics
-- Grafana dashboards
-- Log aggregation (ELK stack)
-- Alert system
+### Log Locations
+- **Application logs**: Terminal output
+- **Container logs**: Docker engine
+- **Installation data**: `~/.black-box-store/data/`
 
-## Community & Support
+## Community & Ecosystem
+
+### Dawn Black Box Hardware
+The Black Box Store is designed to work perfectly with the Dawn Black Box hardware:
+- Pre-installed software option
+- Optimized for DePIN workloads
+- GPU support for AI inference
+- High-performance networking
 
 ### Documentation
-- README.md - Complete guide
-- QUICKSTART.md - 5-minute setup
-- DEPLOYMENT.md - Production deployment
-- CONTRIBUTING.md - Development guide
+- Comprehensive README
+- Quick start guide
+- App addition guide
+- API documentation
+- Troubleshooting guides
 
-### Examples
-- Sample Docker Compose files
-- Common DePIN patterns
-- Best practices guide
-
-## License
-
-MIT License - Free for personal and commercial use
+### Support Channels
+- GitHub Issues
+- Documentation
+- Community forums (future)
 
 ## Success Metrics
 
-### For Users
-- Installation time: < 10 minutes
-- App installation: < 2 minutes
-- User learning curve: < 5 minutes
-- Uptime: 99%+
+### User Experience
+- **Installation time**: < 5 minutes
+- **First app install**: < 2 minutes
+- **Learning curve**: < 5 minutes
+- **Uptime**: 99%+ (Docker dependent)
 
-### For Developers
-- Setup time: < 5 minutes
-- Clear documentation
-- Easy to extend
-- Active community
+### Developer Experience
+- **Setup time**: < 3 minutes
+- **Add new app**: < 30 minutes
+- **Clear documentation**: ✅
+- **Easy to extend**: ✅
+
+## Advantages Over Alternatives
+
+### vs. Manual Docker Compose
+- Visual interface
+- Status tracking
+- Log viewing
+- Easy app discovery
+
+### vs. Portainer
+- Simpler, focused on DePIN
+- Pre-configured apps
+- One-command CLI
+- Lighter weight
+
+### vs. Kubernetes
+- Much simpler
+- No orchestration complexity
+- Perfect for single-machine
+- Lower resource overhead
 
 ## Conclusion
 
-The DePIN App Store provides a modern, user-friendly solution for managing Docker-based infrastructure nodes. With its intuitive interface, robust backend, and easy deployment, it serves as a foundation for decentralized infrastructure management.
+The Dawn Black Box Store represents a new approach to DePIN node management:
 
-The project is designed to be:
-- **Simple**: One command installation
-- **Powerful**: Full Docker Compose support
-- **Extensible**: Clean architecture for additions
-- **Practical**: Real-world DePIN use cases
-- **Open**: MIT licensed and community-driven
+**Simple**: One command to install, one command to run
+**Focused**: Built specifically for DePIN applications  
+**Modern**: Latest web technologies and UX patterns
+**Open**: MIT licensed and community-driven
+**Practical**: Solves real problems for node operators
 
-Whether you're running a single node or managing an entire DePIN operation, this app store provides the tools you need to succeed.
+Whether you're running nodes on a laptop, home server, or Dawn Black Box hardware, this application provides the tools you need to succeed in the DePIN ecosystem.
 
+The CLI-based architecture ensures:
+- No unnecessary background services
+- Full user control
+- Simple troubleshooting
+- Cross-platform compatibility
+- Easy updates via Git
+
+It's the perfect balance between simplicity and functionality for managing your DePIN infrastructure.

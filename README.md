@@ -1,374 +1,299 @@
-# DePIN App Store
+# Dawn Black Box Store 🚀
 
-A modern, self-hosted application store for managing DePIN (Decentralized Physical Infrastructure Network) nodes on Ubuntu machines. Upload Docker Compose files and manage your infrastructure nodes through a beautiful web interface.
+A modern CLI tool for managing DePIN (Decentralized Physical Infrastructure Network) nodes. Install and manage your infrastructure nodes through a beautiful local web interface, powered by Docker.
 
-## Features
+## ✨ Features
 
-- 🚀 **Easy Installation**: One-command installation on Ubuntu
-- 📦 **Pre-configured Apps**: DePIN node applications pre-defined in the repository
-- 🐳 **Docker Compose Integration**: Automatically manage Docker containers
-- 🎨 **Modern UI**: Beautiful, responsive web interface built with Next.js and Tailwind CSS
-- 📊 **Real-time Status**: Monitor running/stopped apps with network status indicators
-- 📝 **Container Logs**: View logs directly from the web interface
-- 🔄 **Lifecycle Management**: Start, stop, install, and uninstall apps with one click
-- 📖 **Documentation Links**: Direct access to each app's documentation
+- 🖥️ **Simple CLI**: One command to launch the web interface
+- 🚀 **Easy Installation**: Automated setup with dependency management
+- 📦 **Pre-configured Apps**: Popular DePIN projects ready to install
+- 🐳 **Docker Powered**: Automatic container management
+- 🎨 **Modern UI**: Beautiful, responsive web interface
+- 📊 **Real-time Monitoring**: Track running/stopped apps with status indicators
+- 📝 **Container Logs**: View logs directly from the interface
+- 🔄 **Full Lifecycle Management**: Install, start, stop, and uninstall with one click
 
-## Prerequisites
+## 📋 Prerequisites
 
-- Ubuntu 20.04 or later
-- Root/sudo access
-- Internet connection
+**Good news!** The installer will automatically install missing dependencies for you.
 
-## Installation
+The Black Box Store requires:
+- **Node.js 18+** - Auto-installed if missing
+- **Docker** - Auto-installed if missing
+- **Git** - Auto-installed if missing
+
+### Supported Operating Systems
+- **macOS** 10.15+ (Catalina and later)
+- **Linux** - Ubuntu 20.04+ (and derivatives)
+
+The install script will detect your OS and install the appropriate versions automatically.
+
+## 🚀 Installation
 
 ### Quick Install (Recommended)
 
-1. Clone or download this repository to your Ubuntu machine:
+**macOS:**
 ```bash
-git clone <repository-url>
-cd depin-app-store
+# Download and run (no sudo needed)
+curl -fsSL https://raw.githubusercontent.com/meta-light/black-box-store/main/install.sh | bash
 ```
 
-2. Run the installation script:
+**Linux (Ubuntu):**
 ```bash
+# Download and run with sudo (needed to install system packages)
+curl -fsSL https://raw.githubusercontent.com/meta-light/black-box-store/main/install.sh | sudo bash
+```
+
+Or clone and install manually:
+
+**macOS:**
+```bash
+git clone https://github.com/meta-light/black-box-store.git
+cd black-box-store
+bash install.sh
+```
+
+**Linux:**
+```bash
+git clone https://github.com/meta-light/black-box-store.git
+cd black-box-store
 sudo bash install.sh
 ```
 
-The script will:
-- Install Node.js 20.x
-- Install Docker and Docker Compose
-- Set up the DePIN App Store
-- Create a systemd service
-- Start the application
+2. **Reload your shell:**
 
-3. Access the app store at `http://localhost:3000`
-
-### Manual Installation
-
-If you prefer to install manually:
-
-1. **Install Node.js 20.x:**
 ```bash
-curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-sudo apt-get install -y nodejs
+# macOS (zsh)
+source ~/.zshrc
+
+# Linux or macOS (bash)
+source ~/.bashrc
 ```
 
-2. **Install Docker:**
+3. **Launch the Black Box Store:**
+
 ```bash
-# Add Docker's official GPG key
-sudo apt-get update
-sudo apt-get install ca-certificates curl gnupg
-sudo install -m 0755 -d /etc/apt/keyrings
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-sudo chmod a+r /etc/apt/keyrings/docker.gpg
-
-# Add the repository
-echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
-  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-
-# Install Docker
-sudo apt-get update
-sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+dbb-store
 ```
 
-3. **Set up the application:**
+The installer will:
+- ✅ Automatically install Node.js, Git, and Docker if missing
+- ✅ Clone the repository to `~/.black-box-store`
+- ✅ Install all dependencies
+- ✅ Build the application
+- ✅ Install the `dbb-store` CLI command
+
+## 💻 Usage
+
+### Starting the Black Box Store
+
+Simply run:
+
 ```bash
-cd depin-app-store
-npm install
-npm run build
-npm start
+dbb-store
 ```
 
-## Usage
+This will:
+1. Start the Next.js server on `http://localhost:3456`
+2. Automatically open your browser
+3. Display the Black Box Store interface
 
-### Accessing the App Store
-
-Open your web browser and navigate to:
-```
-http://localhost:3000
-```
-
-### Adding New Apps to the Store
-
-Apps are defined in the `apps/` directory. Each app has its own folder with:
-- `info.ts` - App metadata
-- `docker-compose.yaml` - Docker Compose configuration
-- `docs.md` - Documentation
-- `install.sh` - Installation script
-
-To add a new app:
-1. Create a new folder in `apps/` with your app name (lowercase, no spaces)
-2. Create the required files following the structure of existing apps
-3. Commit and push to the repository
-
-### Installing an App
-
-1. Browse available apps
-2. Click **"Install"** on the app you want
-3. Wait for the installation to complete
-4. The app status will change to "Running"
+Press `Ctrl+C` to stop the server.
 
 ### Managing Apps
 
-- **Install**: Install an available app
-- **Start**: Start a stopped app
-- **Stop**: Stop a running app
-- **Uninstall**: Remove the app and its containers
-- **View Logs**: View container logs in real-time
-- **Documentation**: Access the app's official documentation
+Once the interface is open, you can:
 
-### System Commands
+- **Browse Apps**: View all available DePIN applications
+- **Install**: Click "Install" on any app to deploy it with Docker
+- **Start/Stop**: Control running applications
+- **View Logs**: Monitor container logs in real-time
+- **Uninstall**: Remove apps and their containers
+- **Read Docs**: Access documentation for each app
 
-Control the DePIN App Store service:
+### Filter Apps
+
+Use the filter buttons to view:
+- **All Apps**: Every available application
+- **Available**: Apps ready to install
+- **Installed**: Apps currently installed (running or stopped)
+
+## 📱 Supported DePIN Projects
+
+The Black Box Store includes:
+
+- **🌐 Pipe Network**: Decentralized CDN network
+- **📡 Nexus**: Decentralized compute network
+- **🔒 Arcium**: Confidential computing network
+- **⚡ Grass**: Bandwidth sharing network
+- **🧠 Inference Labs**: AI inference network
+- **🚀 TapeDrive**: Decentralized storage network
+- **🌟 Tashi**: High-performance DePIN network
+- **✨ Bless**: Decentralized infrastructure network
+
+## 🛠️ Development
+
+### Running in Development Mode
 
 ```bash
-# Start the service
-sudo systemctl start depin-app-store
-
-# Stop the service
-sudo systemctl stop depin-app-store
-
-# Restart the service
-sudo systemctl restart depin-app-store
-
-# Check status
-sudo systemctl status depin-app-store
-
-# View logs
-sudo journalctl -u depin-app-store -f
+cd ~/.black-box-store
+npm run dev
 ```
 
-## Adding a New DePIN App
-
-### App Directory Structure
-
-Create a new directory in `apps/` with this structure:
-
-```
-apps/your-app-name/
-├── info.ts                 # App metadata
-├── docker-compose.yaml     # Docker Compose configuration
-├── docs.md                 # Documentation
-└── install.sh              # Installation script
-```
-
-### info.ts Template
-
-```typescript
-import { Info } from "../interface";
-
-export const info: Info = {
-    name: "Your App Name",
-    description: "Description of your DePIN node",
-    company: "Your Company",
-    version: "1.0.0",
-    category: "Storage|Network|Compute|IoT|Other",
-    dockerComposeFile: "docker-compose.yaml",
-    docs: "https://your-docs-url.com",
-    icon: "https://your-icon-url.com/icon.png",
-    requirements: {
-        minMemoryGb: "2",
-        minCpu: "1",
-        minDiskGb: "10"
-    },
-    status: "mainnet" // or "testnet" or "devnet"
-}
-```
-
-### docker-compose.yaml Example
-
-```yaml
-version: '3.8'
-
-services:
-  your-service:
-    image: your-image:latest
-    ports:
-      - "8080:8080"
-    volumes:
-      - ./data:/data
-    environment:
-      - ENV_VAR=value
-    restart: unless-stopped
-```
-
-## Architecture
-
-### Tech Stack
-
-- **Frontend**: Next.js 15, React 19, TypeScript, Tailwind CSS
-- **Backend**: Next.js API Routes
-- **Storage**: JSON file-based storage (easily replaceable with a database)
-- **Container Management**: Docker Compose CLI
-- **Runtime**: Node.js 20+
+The app will be available at `http://localhost:3000`
 
 ### Project Structure
 
 ```
-depin-app-store/
+black-box-store/
 ├── app/
-│   ├── api/
-│   │   └── apps/              # API routes
-│   │       ├── route.ts       # List apps
-│   │       └── [id]/          # App-specific routes
-│   ├── layout.tsx
-│   └── page.tsx               # Main UI
-├── apps/                      # Pre-defined DePIN apps (in repo)
-│   ├── interface.ts           # App info interface
-│   ├── pipe-network/          # Example app
-│   └── tapedrive/             # Example app
-├── components/
-│   └── AppCard.tsx            # App card component
+│   ├── api/                  # API routes for app management
+│   │   ├── apps/            # App endpoints
+│   │   └── docker/          # Docker health checks
+│   ├── page.tsx             # Main UI
+│   ├── layout.tsx           # Layout wrapper
+│   └── types.ts             # TypeScript types
+├── apps/                     # DePIN app definitions
+│   ├── interface.ts         # App info interface
+│   ├── pipe-network/        # Example app
+│   ├── nexus/              # Example app
+│   └── [other-apps]/       # More apps
 ├── lib/
-│   ├── docker.ts              # Docker Compose integration
-│   └── storage.ts             # Data persistence
-├── types/
-│   └── index.ts               # TypeScript definitions
-├── docs/                      # Documentation
-│   └── ADDING_APPS.md         # Guide for adding apps
-├── data/                      # Runtime data (auto-created)
-│   └── installations.json     # Installation records
-├── install.sh                 # Ubuntu installation script
-└── README.md                  # This file
+│   ├── docker.ts           # Docker Compose integration
+│   └── storage.ts          # Data persistence
+├── data/                    # Runtime data (auto-created)
+│   ├── installations.json  # Installation records
+│   └── compose-files/      # Generated compose files
+├── docs/                    # Documentation
+│   ├── ADDING_APPS.md      # Guide for adding apps
+│   └── [other-docs]/       # More documentation
+├── bin/
+│   └── dbb-store           # CLI executable
+└── install.sh              # Installation script
 ```
 
-## Data Storage
+## 📖 Adding New Apps
 
-Apps are defined in the `apps/` directory (version controlled):
-- Each app has its own folder with metadata and compose files
-- Apps are loaded at runtime from the filesystem
+Want to add a new DePIN project? See our [Adding Apps Guide](https://github.com/meta-light/black-box-store/blob/main/docs/ADDING_APPS.md).
 
-Runtime data is stored in the `data/` directory:
-- `installations.json`: Installation records and status
+Quick overview:
 
-## Security Considerations
+1. Create a new folder in `apps/[your-app-name]/`
+2. Add `info.ts` with app metadata
+3. Add `docker-compose.yaml` with Docker configuration
+4. Optionally add `docs.md` and `install.sh`
+5. Submit a pull request
 
-⚠️ **Important Security Notes:**
+## 🔧 Configuration
 
-1. This application runs on localhost by default
-2. Docker socket access is required (high privilege)
-3. Uploaded Docker Compose files are executed with host Docker privileges
-4. This is intended for private, trusted environments
-5. For production use, consider:
-   - Adding authentication
-   - Implementing input validation and sanitization
-   - Running behind a reverse proxy
-   - Implementing resource limits
-   - Adding network isolation
+### Custom Port
 
-## Development
+To run on a different port, edit `~/.black-box-store/bin/dbb-store` and change the `PORT` variable.
 
-To run in development mode:
+### Installation Directory
+
+The application is installed in `~/.black-box-store` by default. All app data and configurations are stored there.
+
+## 🐛 Troubleshooting
+
+### CLI command not found
 
 ```bash
-npm install
-npm run dev
+# Make sure the path is in your shell config
+echo 'export PATH="$HOME/.black-box-store/bin:$PATH"' >> ~/.zshrc
+source ~/.zshrc
 ```
 
-The application will be available at `http://localhost:3000`
+### Docker permission denied
 
-## Troubleshooting
-
-### Service won't start
 ```bash
-# Check logs
-sudo journalctl -u depin-app-store -n 50
-
-# Check if port 3000 is already in use
-sudo lsof -i :3000
-```
-
-### Docker permission issues
-```bash
-# Ensure user is in docker group
+# Add your user to the docker group (Linux)
 sudo usermod -aG docker $USER
-
-# Log out and back in for changes to take effect
+# Log out and back in
 ```
 
-### App installation fails
-```bash
-# Check Docker is running
-sudo systemctl status docker
+### Port already in use
 
-# Check Docker Compose is installed
-docker compose version
+If port 3456 is already in use, edit the `dbb-store` script and change the `PORT` variable.
 
-# View app store logs
-sudo journalctl -u depin-app-store -f
-```
+### Docker not running
 
-## Uninstallation
-
-To remove the DePIN App Store:
+Make sure Docker Desktop (macOS) or Docker daemon (Linux) is running:
 
 ```bash
-# Stop and disable the service
-sudo systemctl stop depin-app-store
-sudo systemctl disable depin-app-store
+# Check Docker status
+docker info
 
-# Remove the service file
-sudo rm /etc/systemd/system/depin-app-store.service
-sudo systemctl daemon-reload
-
-# Remove the installation directory
-sudo rm -rf /opt/depin-app-store
+# macOS: Open Docker Desktop
+# Linux: Start Docker
+sudo systemctl start docker
 ```
 
-## API Documentation
+### Update the Black Box Store
 
-### List All Apps
+```bash
+cd ~/.black-box-store
+git pull
+npm install
+npm run build
 ```
-GET /api/apps
-```
-Returns all apps defined in the `apps/` directory with their current status.
 
-### Get App Details
-```
-GET /api/apps/[id]
-```
-Returns detailed information about a specific app.
+## 🗑️ Uninstallation
 
-### Install App
-```
-POST /api/apps/[id]/install
-```
-Installs an app using Docker Compose.
+To remove the Black Box Store:
 
-### Uninstall App
-```
-POST /api/apps/[id]/uninstall
-```
-Uninstalls an app and removes its containers.
+```bash
+# Remove installation directory
+rm -rf ~/.black-box-store
 
-### Start App
+# Remove from PATH (edit your shell config)
+# Remove the line containing "black-box-store/bin" from:
+# - macOS: ~/.zshrc or ~/.bash_profile
+# - Linux: ~/.bashrc
 ```
-POST /api/apps/[id]/start
-```
-Starts a stopped app.
 
-### Stop App
-```
-POST /api/apps/[id]/stop
-```
-Stops a running app.
+## 🔒 Security Notes
 
-### Get Logs
-```
-GET /api/apps/[id]/logs?tail=100
-```
-Retrieves container logs for an installed app.
+⚠️ **Important**: This application:
 
-## License
+- Runs locally on your machine (not accessible from the internet)
+- Requires Docker socket access (high privilege)
+- Executes Docker Compose files with full Docker permissions
+- Is intended for personal use in trusted environments
+
+For production or shared environments, consider adding:
+- Authentication layer
+- Rate limiting
+- Network isolation
+- Resource limits
+
+## 🛒 Get the Dawn Black Box
+
+Want to run these DePIN apps on dedicated hardware? Check out the **Dawn Black Box** - a powerful device designed specifically for running multiple DePIN nodes:
+
+- 🚀 WiFi 6E Router
+- 🧠 64GB RAM
+- 💾 480GB NVMe + 1TB SSD
+- ⚡ Intel Core i5 14400 (10 cores)
+- 🎮 GPU options: 6GB to 20GB VRAM
+- 📡 10Gbps networking
+
+[Shop Dawn Black Box →](https://shop.dawninternet.com/)
+
+## 📄 License
 
 MIT
 
-## Contributing
+## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome! Please check out our [Contributing Guide](https://github.com/meta-light/black-box-store/blob/main/docs/CONTRIBUTING.md).
 
-## Support
+## 💬 Support
 
-For issues and questions, please open an issue on the project repository.
+- 📚 [View Documentation](https://github.com/meta-light/black-box-store/tree/main/docs)
+- 🐛 [Report Issues](https://github.com/meta-light/black-box-store/issues)
+- 💡 [Request Features](https://github.com/meta-light/black-box-store/issues/new)
+
+---
+
+Built with ❤️ for the DePIN community

@@ -1,12 +1,15 @@
 {
-  "name": "depin-app-store",
-  "version": "1.0.0",
-  "description": "A self-hosted app store for managing DePIN nodes with Docker Compose",
-  "author": "DePIN App Store Contributors",
+  "name": "black-box-store",
+  "version": "0.0.1",
+  "description": "A CLI tool for managing DePIN nodes through a local web interface",
+  "author": "Dawn Black Box Contributors",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-org/depin-app-store"
+    "url": "https://github.com/meta-light/black-box-store"
+  },
+  "bin": {
+    "dbb-store": "./bin/dbb-store"
   },
   "keywords": [
     "depin",
