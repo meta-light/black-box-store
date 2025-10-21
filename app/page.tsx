@@ -198,7 +198,6 @@ export default function Home() {
   const [apps, setApps] = useState<DepinApp[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'available' | 'installed'>('all');
-
   const fetchApps = async () => {
     try {
       const response = await fetch('/api/apps');
@@ -208,25 +207,38 @@ export default function Home() {
     catch (error) {console.error('Failed to fetch apps:', error);} 
     finally {setLoading(false);}
   };
-
   useEffect(() => {fetchApps();}, []);
-
   const filteredApps = apps.filter(app => {
     if (filter === 'all') return true;
     if (filter === 'available') return app.status === 'available';
     if (filter === 'installed') return app.status === 'running' || app.status === 'stopped';
     return true;
   });
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
       <header className="bg-gray-800/50 backdrop-blur-md border-b border-gray-700 sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold text-white">DePIN App Store</h1>
-            <p className="text-gray-400 mt-1">Manage your decentralized infrastructure nodes</p>
+            <div className="flex items-center gap-3">
+              <img src="/icons/dawn.jpg" alt="Black Box" className="w-12 h-12 rounded-full" />
+              <div>
+                <h1 className="text-3xl font-bold text-white">Black Box App Store</h1>
+                <p className="text-gray-400 mt-1">Manage your decentralized infrastructure nodes</p>
+              </div>
+            </div>
           </div>
+          <a
+            href="https://shop.dawninternet.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-lg font-semibold transition-all transform hover:scale-105 shadow-lg flex items-center gap-2"
+          >
+            <span>Get Dawn Black Box</span>
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            </svg>
+          </a>
           </div>
           <div className="flex gap-4 mt-6">
             <button
