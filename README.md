@@ -2,6 +2,8 @@
 
 A modern CLI tool for managing DePIN (Decentralized Physical Infrastructure Network) nodes. Install and manage your infrastructure nodes through a beautiful local web interface, powered by Docker.
 
+![Dawn Black Box Store Interface](./public/screenshot.png)
+
 ## ✨ Features
 
 - 🖥️ **Simple CLI**: One command to launch the web interface
